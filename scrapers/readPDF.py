@@ -1,7 +1,7 @@
 import sys
 import fitz  # PyMuPDF
 import re
-import matplotlib.pyplot as plt
+import json
 
 def extraer_avaluo(path_pdf):
     doc = fitz.open(path_pdf)
@@ -46,31 +46,4 @@ if __name__ == '__main__':
         etiquetas.append(label)
         valores.append(valor)
 
-        if anterior:
-            _, _, valor_ant = anterior
-            diferencia = valor - valor_ant
-            porcentaje = (diferencia / valor_ant) * 100
-            signo = "+" if diferencia >= 0 else "-"
-            cambio_monto = f"{signo}${abs(diferencia):,}"
-            cambio_pct = f"{signo}{abs(porcentaje):.2f}%"
-        else:
-            cambio_monto = "(sin comparacion)"
-            cambio_pct = ""
-
-        print(f"{label} => ${valor:,} {cambio_monto} {cambio_pct}".strip())
-        anterior = (año, semestre, valor)
-
-    # Graficar
-    plt.figure(figsize=(10, 6))
-    plt.plot(etiquetas, valores, marker='o', linestyle='-', linewidth=2)
-
-    for i, val in enumerate(valores):
-        plt.text(i, val, f"${val:,}", ha='center', va='bottom', fontsize=9)
-
-    plt.title("Avalúo total por semestre")
-    plt.xlabel("Semestre")
-    plt.ylabel("Avalúo ($)")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.xticks(rotation=45)
-    plt.show()
+    print(json.dumps({"labels": etiquetas, "values": valores}))

@@ -68,4 +68,9 @@ module.exports = async function bot_TGR(page, manzana, predio, comuna, region) {
     console.table(datosVencidos.vencidas);
     console.log('Proxima cuota:');
     console.table(datosVencidos.proximas);
+
+    vencidas = datosVencidos.vencidas
+    proximas = datosVencidos.proximas
+
+    return {vencidas, proximas}
 }

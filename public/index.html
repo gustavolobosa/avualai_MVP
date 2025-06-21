@@ -1,16 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>Scraper MVP</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #444;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.2s ease-in-out;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .loader-spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <h1>Run Scrapers</h1>
-    <form action="/run-scrapers" method="POST">
-        <label>Comuna: <input type="text" name="comuna" required></label><br>
-        <label>Region: <input type="text" name="region" required></label><br>
-        <label>Direccion: <input type="text" name="direccion" required></label><br>
-        <label>Numero: <input type="text" name="numero" required></label><br>
-        <button type="submit">Run Scrapers</button>
+
+<div class="form-container">
+    <h1>Buscar Propiedad</h1>
+    <form id="scraper-form" action="/run-scrapers" method="POST">
+
+        <label for="region">Región</label>
+        <input type="text" name="region" id="region" required>
+
+        <label for="comuna">Comuna</label>
+        <input type="text" name="comuna" id="comuna" required>
+
+        <label for="direccion">Dirección</label>
+        <input type="text" name="direccion" id="direccion" required>
+
+        <label for="numero">Número</label>
+        <input type="text" name="numero" id="numero" required>
+
+        <button type="submit">Buscar</button>
     </form>
+
+    <div id="loader" style="display: none; text-align: center; margin-top: 30px;">
+        <div class="loader-spinner"></div>
+        <p>Procesando datos... Esto puede tardar ~1 minuto.</p>
+    </div>
+
+</div>
+
+<script>
+    const form = document.getElementById('scraper-form');
+    const loader = document.getElementById('loader');
+
+    form.addEventListener('submit', () => {
+        loader.style.display = 'block';   // Mostrar el loader
+    });
+
+    form.addEventListener('submit', () => {
+        loader.style.display = 'block';
+        form.querySelector('button[type="submit"]').disabled = true;
+        form.querySelector('button[type="submit"]').innerText = "Procesando...";
+    });
+</script>
+
 </body>
 </html>

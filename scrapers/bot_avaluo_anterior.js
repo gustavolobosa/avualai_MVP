@@ -16,14 +16,23 @@ module.exports = async function bot_SII_maps(page, variables, manzana, predio) {
     const anioActual = new Date().getFullYear();
     primeraVez = true
 
-    for (let year = anioActual - 5; year < anioActual; year++) {
+    for (let year = anioActual - 5; year <= anioActual; year++) {
         for (let semestre of ['1', '2']) {
 
             // esperar a que se cargue la opcion de año
             await page.waitForSelector('select[name="añoCertifAnt"]', { state: 'attached' });
             await page.selectOption('select[name="añoCertifAnt"]', String(year));
 
-            await page.waitForSelector('select[name="semestreCertifAnt"]', { state: 'attached' });
+            
+            const opcionesSemestre = await page.$$eval('select[name="semestreCertifAnt"] option', opts =>
+                opts.map(o => o.value)
+            );
+
+            if (!opcionesSemestre.includes(semestre)) {
+                console.log(`⚠️ Semestre ${semestre} no disponible para el año ${year}, omitiendo.`);
+                continue;
+            }
+
             await page.selectOption('select[name="semestreCertifAnt"]', semestre);
 
             if (primeraVez == true){
@@ -86,9 +95,19 @@ module.exports = async function bot_SII_maps(page, variables, manzana, predio) {
 
         const scriptPath = path.join(__dirname, 'readPDF.py');
         const command = `python "${scriptPath}" ${archivosPDF.join(' ')}`;
+
         const output = execSync(command, { encoding: 'utf-8' });
-        console.log('📊 Resultados del análisis de PDFs:');
-        console.log(output.trim());
+
+        let parsedPDFData = {};
+        try {
+            parsedPDFData = JSON.parse(output);
+        } catch (e) {
+            console.error("❌ Error al parsear salida JSON de Python:", e.message);
+        }
+
+        console.log('retornando:', parsedPDFData)
+        return parsedPDFData; // <- Este será tu gráfico
+
     } catch (error) {
         console.error('❌ Error ejecutando el script Python:', error.message);
         console.error('Salida de error:', error.stderr);

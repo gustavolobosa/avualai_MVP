@@ -57,7 +57,21 @@ module.exports = async function({ comuna, region, direccion, numero }) {
     await bot_SII_maps(page_SII, variables);
 
     // Ejecutar el bot SII Rol y obtener la manzana y predio
-    const { manzana, predio } = await bot_SII_rol(page_SII, variables);
+    const { manzana, 
+        predio, 
+        rol, 
+        ubicacion, 
+        destino, 
+        reavaluo, 
+        avaluoTotal, 
+        avaluoAfecto, 
+        avaluoExento, 
+        codAreaHomo, 
+        rangoSupPred, 
+        valM2, 
+        valComM2, 
+        valComM2FloatParsed, 
+        diffPorcentual } = await bot_SII_rol(page_SII, variables);
 
     await browser_SII.close();
 
@@ -68,7 +82,7 @@ module.exports = async function({ comuna, region, direccion, numero }) {
     await page_TGR.goto('https://www.tgr.cl/tramites-tgr/certificado-de-movimientos-de-contribuciones/');
     
     // Ejecutar el bot TGR
-    await bot_TGR(page_TGR, manzana, predio, mapping[variables.comuna], variables.region);
+    const {vencidas, proximas} = await bot_TGR(page_TGR, manzana, predio, mapping[variables.comuna], variables.region);
 
     await browser_TGR.close();
 
@@ -78,8 +92,28 @@ module.exports = async function({ comuna, region, direccion, numero }) {
     // Ir a una página objetivo
     await page_AA.goto('https://www2.sii.cl/vicana/Menu/ConsultarAntecedentesSC');
 
-    await bot_AA(page_AA, variables, manzana, predio);
+    const graficoPDF = await bot_AA(page_AA, variables, manzana, predio);
+    console.log("📊 Datos del gráfico PDF:", graficoPDF);
 
     await browser_AA.close();
+
+    return {
+        rol,
+        ubicacion,
+        destino,
+        reavaluo,
+        avaluoTotal,
+        avaluoAfecto,
+        avaluoExento,
+        codAreaHomo,
+        rangoSupPred,
+        valM2,
+        valComM2,
+        vencidas,
+        proximas, 
+        valComM2FloatParsed, 
+        diffPorcentual,
+        graficoPDF
+    };
 
 }

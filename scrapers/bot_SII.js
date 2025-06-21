@@ -3,6 +3,7 @@ module.exports = async function bot_SII_rol(page, variables) {
     //*[@id="titulo"]/div[7]/i
     await page.waitForSelector('//*[@id="titulo"]/div[7]/i');
     await page.click('//*[@id="titulo"]/div[7]/i');
+    
 
     // llenar campo //*[@id="addresssearch"]/div[2]/div[1]/input con variables predefinidas
     await page.click('xpath=//*[@id="addresssearch"]/div[2]/div[1]/input');
@@ -33,7 +34,6 @@ module.exports = async function bot_SII_rol(page, variables) {
     await page.fill('//*[@id="addresssearch"]/div[2]/div[2]/input', variables.direccion, { delay: 500 });
     await page.fill('//*[@id="addresssearch"]/div[2]/div[3]/input', variables.numero, { delay: 500 });
 
-    console.log('OKK')
     await page.waitForTimeout(1000); 
 
     // seleccionar el boton buscar
@@ -43,11 +43,11 @@ module.exports = async function bot_SII_rol(page, variables) {
     }, { timeout: 15000 });
     await page.click('//*[@id="addresssearch"]/div[2]/div[9]/div/button[1]');
 
-    console.log('OKK2')
 
     // esperar a que aparezca el boton de ver detalles
-    await page.waitForSelector('//*[@id="ng-app"]/body/div[5]/div/div/div/div[2]/table/tbody/tr/td[4]/button', { timeout: 10000 });
-    await page.click('//*[@id="ng-app"]/body/div[5]/div/div/div/div[2]/table/tbody/tr/td[4]/button');
+    await page.waitForSelector('//*[@id="ng-app"]/body/div[6]/div/div/div/div[2]/table/tbody/tr/td[4]/button', { timeout: 10000 });
+    await page.click('//*[@id="ng-app"]/body/div[6]/div/div/div/div[2]/table/tbody/tr/td[4]/button');
+                      //*[@id="ng-app"]/body/div[6]/div/div/div/div[2]/table/tbody/tr/td[4]/button
 
     await page.waitForTimeout(3000); 
 
@@ -112,7 +112,9 @@ module.exports = async function bot_SII_rol(page, variables) {
     // from 37.67 to $37
     const valComM2FloatParsed = valComM2Float.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-    console.log(`El valor por metro cuadrado (${valM2}) es un ${((parseFloat(valM2Parsed) / valComM2Float) * 100).toFixed(2)}% del valor comercial por metro cuadrado ($${valComM2FloatParsed}) (UF ${valComM2})`);
+    const diffPorcentual = ((parseFloat(valM2Parsed) / valComM2Float) * 100).toFixed(2)
 
-    return {manzana, predio}
+    console.log(`El valor por metro cuadrado (${valM2}) es un ${diffPorcentual}% del valor comercial por metro cuadrado ($${valComM2FloatParsed}) (${valComM2})`);
+
+    return {manzana, predio, rol, ubicacion, destino, reavaluo, avaluoTotal, avaluoAfecto, avaluoExento, codAreaHomo, rangoSupPred, valM2, valComM2, valComM2FloatParsed, diffPorcentual}
 }

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados del Scraper</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        strong {
+            color: #555;
+        }
+
+        .section {
+            margin-top: 25px;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            background: #007bff;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        a:hover {
+            background: #0056b3;
+        }
+
+        .label {
+            font-weight: bold;
+            display: inline-block;
+            width: 260px;
+        }
+        .section {
+            page-break-inside: avoid;
+        }
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .section {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            .container {
+                page-break-before: auto;
+                page-break-after: auto;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<div id="contenido-pdf">
+    <div class="container">
+    <h1>Resultados Obtenidos</h1>
+
+    <div class="section">
+        <h2>Rol Predial: <%= result.rol %></h2>
+        <p><span class="label">Ubicación:</span> <%= result.ubicacion %></p>
+        <p><span class="label">Destino:</span> <%= result.destino %></p>
+        <p><span class="label">Reavalúo:</span> <%= result.reavaluo %></p>
+    </div>
+
+    <div class="section">
+        <h3>Avalúos</h3>
+        <ul>
+            <li><span class="label">Total:</span> <%= result.avaluoTotal %></li>
+            <li><span class="label">Afecto:</span> <%= result.avaluoAfecto %></li>
+            <li><span class="label">Exento:</span> <%= result.avaluoExento %></li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>Valores Homogéneos</h3>
+        <ul>
+            <li><span class="label">Código Área:</span> <%= result.codAreaHomo %></li>
+            <li><span class="label">Rango Sup. Predial:</span> <%= result.rangoSupPred %></li>
+            <li><span class="label">Valor m² terreno (avalúo):</span> <%= result.valM2 %></li>
+            <li><span class="label">Valor m² comercial (observatorio):</span> $<%= result.valComM2FloatParsed %> (<%= result.valComM2 %>)</li>
+            <li><span class="label">% Diferencia (terreno vs comercial):</span> <%= result.diffPorcentual %>%</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>Movimientos Vencidos</h3>
+        <ul>
+            <% result.vencidas.forEach((item, i) => { %>
+                <li><%= item.vencimiento %> — <%= item.moneda %> <%= item.saldo %></li>
+            <% }) %>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>Próxima Cuota</h3>
+        <ul>
+            <% result.proximas.forEach((item, i) => { %>
+                <li><%= item.vencimiento %> — <%= item.moneda %> <%= item.saldo %></li>
+            <% }) %>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>Histórico de Avalúos por Semestre</h3>
+        <canvas id="graficoPDF" width="600" height="300"></canvas>
+    </div>
+
+    <a href="/">⬅ Volver al formulario</a>
+    </div>
+
+</div>
+
+<div style="text-align: center; margin-top: 40px;">
+    <button id="descargarPDF" class="pdf-button">📄 Descargar como PDF</button>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const etiquetas = JSON.parse('<%- JSON.stringify(result.graficoPDF.labels || []) %>');
+    const valores = JSON.parse('<%- JSON.stringify(result.graficoPDF.values || []) %>');
+
+
+    const ctx = document.getElementById('graficoPDF').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: etiquetas,
+            datasets: [{
+                label: 'Avalúo Total ($)',
+                data: valores,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.2,
+                fill: true,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+    document.getElementById('descargarPDF').addEventListener('click', () => {
+        const element = document.getElementById('contenido-pdf');
+
+        const opt = {
+            margin:       [0.4, 0.4, 0.4, 0.4],
+            filename:     'resultado_avaluo.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, logging: false },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+            pagebreak:    { mode: ['css', 'legacy'] }
+        };
+
+        html2pdf().set(opt).from(element).save();
+    });
+</script>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,8 +1,11 @@
 module.exports = async function bot_SII_maps(page, variables) {
 
-    // presionar un boton con xpath
-    await page.waitForSelector('//*[@id="ng-app"]/body/div[5]/div/div/div[3]/div/button');
-    await page.click('//*[@id="ng-app"]/body/div[5]/div/div/div[3]/div/button');
+
+    // presionar "aceptar" en aviso
+    await page.waitForSelector('//*[@id="ng-app"]/body/div[6]/div/div/div[3]/div/button');
+    await page.click('//*[@id="ng-app"]/body/div[6]/div/div/div[3]/div/button');
+
+    console.log('aviso presionado')
 
     await page.waitForTimeout(500); 
 
@@ -47,8 +50,8 @@ module.exports = async function bot_SII_maps(page, variables) {
         return;
     }
 
-    // 🕒 Esperar a que se cargue la lista de comunas (depende del sistema, puede necesitar más tiempo)
-    await page.waitForTimeout(2000);
+    // Esperar a que se cargue la lista de comunas (depende del sistema, puede necesitar más tiempo)
+    await page.waitForTimeout(500);
     await page.waitForSelector('#comunaSeleccionada');
 
     // Seleccionar comuna
