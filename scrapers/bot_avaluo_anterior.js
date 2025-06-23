@@ -69,7 +69,7 @@ module.exports = async function bot_SII_maps(page, variables, manzana, predio) {
 
             // Esperar la descarga y hacer clic en el botón
             const [ download ] = await Promise.all([
-                page.waitForEvent('download'),
+                page.waitForEvent('download', { timeout: 5000 }),
                 page.click('xpath=//*[@id="DescargaModal"]/div/div/div/form/div[8]/button[2]')
             ]);
 
@@ -105,7 +105,6 @@ module.exports = async function bot_SII_maps(page, variables, manzana, predio) {
             console.error("❌ Error al parsear salida JSON de Python:", e.message);
         }
 
-        console.log('retornando:', parsedPDFData)
         return parsedPDFData; // <- Este será tu gráfico
 
     } catch (error) {

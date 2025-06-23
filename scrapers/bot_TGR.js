@@ -16,9 +16,10 @@ module.exports = async function bot_TGR(page, manzana, predio, comuna, region) {
     await frame.fill('//*[@id="rol"]', manzana);
     await frame.fill('//*[@id="subrol"]', predio);
 
-    await frame.click('//*[@id="btnRecaptchaV3"]');
+    await frame.waitForSelector('#btnRecaptchaV3', {timeout: 5000})
+    await frame.click('#btnRecaptchaV3');
 
-    await frame.waitForSelector('//*[@id="example_length"]/label/select');
+    await frame.waitForSelector('//*[@id="example_length"]/label/select', {timeout: 5000});
     await frame.selectOption('//*[@id="example_length"]/label/select', '100');
 
     const datosVencidos = await frame.evaluate(() => {

@@ -81,6 +81,22 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.2s ease-in-out;
+        }
+
+        select:focus {
+            border-color: #0077ff;
+            outline: none;
+        }
+
     </style>
 </head>
 <body>
@@ -90,10 +106,18 @@
     <form id="scraper-form" action="/run-scrapers" method="POST">
 
         <label for="region">Región</label>
-        <input type="text" name="region" id="region" required>
+        <select name="region" id="region" required>
+            <option value="">Seleccione una región</option>
+            <option value="REGION METROPOLITANA DE SANTIAGO">REGION METROPOLITANA DE SANTIAGO</option>
+        </select>
 
         <label for="comuna">Comuna</label>
-        <input type="text" name="comuna" id="comuna" required>
+        <select name="comuna" id="comuna" required>
+            <option value="">Seleccione una comuna</option>
+            <option value="LAS CONDES">LAS CONDES</option>
+            <option value="PROVIDENCIA">PROVIDENCIA</option>
+            <option value="VITACURA">VITACURA</option>
+        </select>
 
         <label for="direccion">Dirección</label>
         <input type="text" name="direccion" id="direccion" required>
@@ -106,7 +130,7 @@
 
     <div id="loader" style="display: none; text-align: center; margin-top: 30px;">
         <div class="loader-spinner"></div>
-        <p>Procesando datos... Esto puede tardar ~1 minuto.</p>
+        <p>Procesando datos... Esto puede tardar ~3 minutos.</p>
     </div>
 
 </div>
@@ -116,15 +140,13 @@
     const loader = document.getElementById('loader');
 
     form.addEventListener('submit', () => {
-        loader.style.display = 'block';   // Mostrar el loader
-    });
-
-    form.addEventListener('submit', () => {
         loader.style.display = 'block';
-        form.querySelector('button[type="submit"]').disabled = true;
-        form.querySelector('button[type="submit"]').innerText = "Procesando...";
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Procesando...";
     });
 </script>
+
 
 </body>
 </html>
