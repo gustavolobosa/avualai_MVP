@@ -3,6 +3,7 @@ module.exports = async function bot_SII_rol(page, variables) {
     //*[@id="titulo"]/div[7]/i
     await page.waitForSelector('//*[@id="titulo"]/div[7]/i');
     await page.click('//*[@id="titulo"]/div[7]/i');
+    await page.waitForTimeout(1000); // Esperar un segundo para que se cierre el modal
     
 
     // llenar campo //*[@id="addresssearch"]/div[2]/div[1]/input con variables predefinidas
@@ -29,7 +30,6 @@ module.exports = async function bot_SII_rol(page, variables) {
         }
         return false;
     }, variables.comuna);
-
 
     await page.fill('//*[@id="addresssearch"]/div[2]/div[2]/input', variables.direccion, { delay: 500 });
     await page.fill('//*[@id="addresssearch"]/div[2]/div[3]/input', variables.numero, { delay: 500 });

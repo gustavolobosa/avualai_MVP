@@ -136,6 +136,31 @@
         <h3>Histórico de Avalúos por Semestre</h3>
         <canvas id="graficoPDF" width="600" height="300"></canvas>
     </div>
+        <div class="section">
+        <h3>Comparativa con otros predios de la manzana</h3>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+                <tr style="background-color: #007bff; color: white;">
+                    <th style="padding: 8px; border: 1px solid #ccc;">Predio</th>
+                    <th style="padding: 8px; border: 1px solid #ccc;">Dirección</th>
+                    <th style="padding: 8px; border: 1px solid #ccc;">Avalúo Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% (result.resultadosPredios || []).forEach(item => {
+                    const isActual = item.predio === result.predio;
+                %>
+                    <tr style="<%= isActual ? 'font-weight: bold; background-color: #e0f0ff;' : '' %>">
+                        <td style="padding: 8px; border: 1px solid #ccc;"><%= item.predio %></td>
+                        <td style="padding: 8px; border: 1px solid #ccc;"><%= item.direccion %></td>
+                        <td style="padding: 8px; border: 1px solid #ccc;"><%= item.avaluoTotal %></td>
+                    </tr>
+                <% }) %>
+
+            </tbody>
+        </table>
+    </div>
+
 
     <a href="/">⬅ Volver al formulario</a>
     </div>

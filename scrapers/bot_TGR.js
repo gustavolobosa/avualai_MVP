@@ -2,16 +2,37 @@ const { chromium } = require('playwright');
 
 module.exports = async function bot_TGR(page, manzana, predio, comuna, region) {
 
+    console.log(`Running bot_TGR with:
+        Manzana: ${manzana}
+        Predio: ${predio}
+        Comuna: ${comuna}
+        Region: ${region}`);
+
+
     await page.waitForSelector('//*[@id="tgr-sp-contenedor-iframe"]/iframe');
 
     const iframeElement = await page.$('//*[@id="tgr-sp-contenedor-iframe"]/iframe');
     const frame = await iframeElement.contentFrame();
-    
-    await frame.waitForSelector('#region');
-    await frame.selectOption('#region', { label: region });
 
-    await frame.waitForSelector('#comunas');
+    console.log('Esperando a que el iframe esté listo...');
+
+
+    // Seleccionar la región
+    await frame.selectOption('#region', { label: region });
+    console.log('Región seleccionada:', region);
+
+    await frame.waitForTimeout(500);
+
+    const disponibles = await frame.evaluate(() => {
+        return Array.from(document.querySelectorAll('#comunas option')).map(opt => opt.label);
+    });
+
+    console.log('Comunas disponibles:', disponibles);
+
+    // Seleccionar la comuna
     await frame.selectOption('#comunas', { label: comuna });
+    console.log('Comuna seleccionada:', comuna);
+
 
     await frame.fill('//*[@id="rol"]', manzana);
     await frame.fill('//*[@id="subrol"]', predio);
@@ -75,3 +96,29 @@ module.exports = async function bot_TGR(page, manzana, predio, comuna, region) {
 
     return {vencidas, proximas}
 }
+
+
+// if (require.main === module) {
+//     (async () => {
+//         const { chromium } = require('playwright');
+//         const bot_TGR = module.exports;
+
+//         const browser = await chromium.launch({ headless: false });
+//         const page = await browser.newPage();
+
+//         await page.goto('https://www.tgr.cl/tramites-tgr/certificado-de-movimientos-de-contribuciones/');
+
+//         const result = await bot_TGR(
+//             page,
+//             '782',  // manzana
+//             '9',    // predio
+//             'LAS CONDES [71]', // comuna exacta como aparece en el <select>
+//             'REGION METROPOLITANA DE SANTIAGO' // región exacta
+//         );
+
+//         console.log('📊 Resultado final:');
+//         console.log(result);
+
+//         await browser.close();
+//     })();
+// }
