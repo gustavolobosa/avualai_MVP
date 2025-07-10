@@ -9,7 +9,7 @@ module.exports = async function bot_SII_rol(page, variables) {
     // llenar campo //*[@id="addresssearch"]/div[2]/div[1]/input con variables predefinidas
     await page.click('xpath=//*[@id="addresssearch"]/div[2]/div[1]/input');
     await page.fill('xpath=//*[@id="addresssearch"]/div[2]/div[1]/input', '');
-    await page.type('xpath=//*[@id="addresssearch"]/div[2]/div[1]/input', variables.comuna, { delay: 100 });
+    await page.type('xpath=//*[@id="addresssearch"]/div[2]/div[1]/input', variables.comuna, { delay: 60 });
 
     await page.waitForFunction(() => {
         const items = document.querySelectorAll('ul[role="listbox"] li');
@@ -31,8 +31,8 @@ module.exports = async function bot_SII_rol(page, variables) {
         return false;
     }, variables.comuna);
 
-    await page.fill('//*[@id="addresssearch"]/div[2]/div[2]/input', variables.direccion, { delay: 500 });
-    await page.fill('//*[@id="addresssearch"]/div[2]/div[3]/input', variables.numero, { delay: 500 });
+    await page.fill('//*[@id="addresssearch"]/div[2]/div[2]/input', variables.direccion, { delay: 50 });
+    await page.fill('//*[@id="addresssearch"]/div[2]/div[3]/input', variables.numero, { delay: 50 });
 
     await page.waitForTimeout(1000); 
 

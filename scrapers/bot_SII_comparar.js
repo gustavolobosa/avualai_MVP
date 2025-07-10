@@ -1,19 +1,19 @@
 module.exports = async function bot_SII_rol(page, predio, manzana, variables) {
 
     // presionar "aceptar" en aviso
-    await page.waitForSelector('//*[@id="ng-app"]/body/div[6]/div/div/div[3]/div/button');
-    await page.click('//*[@id="ng-app"]/body/div[6]/div/div/div[3]/div/button');
+    await page.waitForSelector('//*[@id="ng-app"]/body/div[6]/div/div/div[3]/div/button', { timeout: 5000 });
+    await page.click('//*[@id="ng-app"]/body/div[6]/div/div/div[3]/div/button', { timeout: 5000 });
 
     //*[@id="titulo"]/div[8]/i "buscar Rol"
-    await page.waitForSelector('//*[@id="titulo"]/div[8]/i');
-    await page.click('//*[@id="titulo"]/div[8]/i');
+    await page.waitForSelector('//*[@id="titulo"]/div[8]/i', { timeout: 5000 });
+    await page.click('//*[@id="titulo"]/div[8]/i', { timeout: 5000 });
     await page.waitForTimeout(1000); // Esperar un segundo para que se cierre el modal
     
 
     // llenar campo //*[@id="rolsearch"]/div[2]/div[1]/input con variables predefinidas
-    await page.click('//*[@id="rolsearch"]/div[2]/div[1]/input');
+    await page.click('//*[@id="rolsearch"]/div[2]/div[1]/input', );
     await page.fill('//*[@id="rolsearch"]/div[2]/div[1]/input', '');
-    await page.type('//*[@id="rolsearch"]/div[2]/div[1]/input', variables.comuna, { delay: 100 });
+    await page.type('//*[@id="rolsearch"]/div[2]/div[1]/input', variables.comuna, { delay: 50 });
 
     await page.waitForFunction(() => {
         const items = document.querySelectorAll('ul[role="listbox"] li');
@@ -45,11 +45,11 @@ module.exports = async function bot_SII_rol(page, predio, manzana, variables) {
     const boton = document.querySelector('#rolsearch div:nth-child(2) div:nth-child(4) div button');
         return boton && !boton.disabled;
     }, { timeout: 15000 });
-    await page.click('//*[@id="rolsearch"]/div[2]/div[4]/div/button[1]');
+    await page.click('//*[@id="rolsearch"]/div[2]/div[4]/div/button[1]', { timeout: 10000 });
 
 
 
-    await page.waitForTimeout(2000); 
+    await page.waitForTimeout(1000); 
 
     // Extraer los textos
     const direccion = await page.locator('xpath=//*[@id="preview"]/div[1]/div[5]').textContent();

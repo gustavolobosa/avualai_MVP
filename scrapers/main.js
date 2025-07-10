@@ -35,6 +35,32 @@ async function reintentarBotConBrowser(fnFactory, nombre = 'bot', intentosMax = 
     }
 }
 
+async function procesarEnBatches(predios, batchSize = 3) {
+    const resultados = [];
+    for (let i = 0; i < predios.length; i += batchSize) {
+        const batch = predios.slice(i, i + batchSize);
+        const promesas = batch.map(predio_com => {
+            const predio_actual = predio_com.split('-')[0].trim();
+            console.log(`Procesando predio: ${predio_actual}`);
+            return reintentarBotConBrowser(
+                async (page) => {
+                    await page.goto('https://www4.sii.cl/mapasui/internet/#/contenido/index.html');
+                    return await bot_SII_comparar(page, predio_actual, manzana, variables);
+                },
+                `SII comparar Rol (${predio_actual})`
+            ).then(({ avaluoTotal, direccion }) => ({
+                predio: predio_actual,
+                avaluoTotal,
+                direccion
+            }));
+        });
+
+        const resultadosBatch = await Promise.all(promesas);
+        resultados.push(...resultadosBatch);
+    }
+    return resultados;
+}
+
 
 
 module.exports = async function({ comuna, region, direccion, numero }) {
@@ -81,20 +107,22 @@ module.exports = async function({ comuna, region, direccion, numero }) {
     console.log(`Encontrados ${predios.length} predios para la manzana ${manzana} en la comuna ${comuna}.`);
     console.log(`Predios: ${predios.join(', ')}`);
     //una lista para ir guardando los resultados de cada predio
-    const resultadosPredios = [];
-    for (const predio_com of predios) {
-        predio_actual = predio_com.split('-')[0].trim();
-        console.log(`Procesando predio: ${predio_actual}`);
-        const { avaluoTotal, direccion
-        } = await reintentarBotConBrowser(
-            async (page) => {
-                await page.goto('https://www4.sii.cl/mapasui/internet/#/contenido/index.html');
-                return await bot_SII_comparar(page, predio_actual, manzana, variables);
-            },
-            'SII comparar Rol'
-        );
-        resultadosPredios.push({ predio: predio_actual, avaluoTotal, direccion });
-    }
+
+    const resultadosPredios = await procesarEnBatches(predios, manzana, variables,  3); // puedes ajustar el tamaño del batch
+
+    // for (const predio_com of predios) {
+    //     predio_actual = predio_com.split('-')[0].trim();
+    //     console.log(`Procesando predio: ${predio_actual}`);
+    //     const { avaluoTotal, direccion
+    //     } = await reintentarBotConBrowser(
+    //         async (page) => {
+    //             await page.goto('https://www4.sii.cl/mapasui/internet/#/contenido/index.html');
+    //             return await bot_SII_comparar(page, predio_actual, manzana, variables);
+    //         },
+    //         'SII comparar Rol'
+    //     );
+    //     resultadosPredios.push({ predio: predio_actual, avaluoTotal, direccion });
+    // }
 
     console.log(`Resultados de los predios:`);
     resultadosPredios.forEach(({ predio, avaluoTotal, direccion }) => {
@@ -114,7 +142,8 @@ module.exports = async function({ comuna, region, direccion, numero }) {
                 await page.goto('https://www2.sii.cl/vicana/Menu/ConsultarAntecedentesSC');
                 return await bot_AA(page, variables, manzana, predio);
             },
-            'bot_AA'
+            'bot_AA',
+            10
         )
     ]);
 
