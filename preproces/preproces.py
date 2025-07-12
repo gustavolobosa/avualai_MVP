@@ -3,8 +3,8 @@ import os
 import json
 
 filename = '../datos/BRTMPNACROL_NAC_2025_1'
-parquet_file = 'datos_procesados.parquet'
-json_por_predio_file = 'datos_por_predio_LAS_CONDES.json'
+parquet_file = '../datos/datos_procesados.parquet'
+json_por_predio_file = '../datos/datos_por_predio_LAS_CONDES.json'
 pd.set_option('display.max_columns', None)
 
 if os.path.exists(parquet_file):
