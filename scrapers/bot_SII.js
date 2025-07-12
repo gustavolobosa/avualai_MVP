@@ -1,9 +1,9 @@
 module.exports = async function bot_SII_rol(page, variables) {
 
     //*[@id="titulo"]/div[7]/i
+    await page.waitForTimeout(2000);
     await page.waitForSelector('//*[@id="titulo"]/div[7]/i');
     await page.click('//*[@id="titulo"]/div[7]/i');
-    await page.waitForTimeout(1000); // Esperar un segundo para que se cierre el modal
     
 
     // llenar campo //*[@id="addresssearch"]/div[2]/div[1]/input con variables predefinidas
@@ -41,12 +41,13 @@ module.exports = async function bot_SII_rol(page, variables) {
     const boton = document.querySelector('#addresssearch div:nth-child(2) div:nth-child(9) div button');
         return boton && !boton.disabled;
     }, { timeout: 15000 });
-    await page.click('//*[@id="addresssearch"]/div[2]/div[9]/div/button[1]');
+    await page.click('//*[@id="addresssearch"]/div[2]/div[9]/div/button[1]', { timeout: 10000 });
 
 
     // esperar a que aparezca el boton de ver detalles
-    await page.waitForSelector('//*[@id="ng-app"]/body/div[6]/div/div/div/div[2]/table/tbody/tr/td[4]/button', { timeout: 10000 });
-    await page.click('//*[@id="ng-app"]/body/div[6]/div/div/div/div[2]/table/tbody/tr/td[4]/button');
+    await page.waitForSelector('//*[@id="ng-app"]/body/div[6]/div/div/div/div[2]/table/tbody/tr[2]/td[4]/button', { timeout: 10000 });
+    await page.click('//*[@id="ng-app"]/body/div[6]/div/div/div/div[2]/table/tbody/tr[2]/td[4]/button');
+                      //*[@id="ng-app"]/body/div[6]/div/div/div/div[2]/table/tbody/tr[2]/td[4]/button
                       //*[@id="ng-app"]/body/div[6]/div/div/div/div[2]/table/tbody/tr/td[4]/button
 
     await page.waitForTimeout(3000); 
@@ -86,9 +87,28 @@ module.exports = async function bot_SII_rol(page, variables) {
     await page.click('//*[@id="preview"]/div[4]/div[1]/div[1]/span');
 
     // Extraer los textos
-    const codAreaHomo = await page.locator('//*[@id="preview"]/div[4]/div[1]/div[2]/div').textContent();
-    const rangoSupPred = await page.locator('//*[@id="preview"]/div[4]/div[1]/div[3]/div').textContent();
-    const valM2 = await page.locator('//*[@id="preview"]/div[4]/div[1]/div[4]/div').textContent();
+    const label_codAreaHomo = page.locator('text=Código Área Homogénea').first();
+    const valorLocator_codAreaHomo = label_codAreaHomo.locator('xpath=..').locator('div'); // sube al padre y busca el <div>
+    const codAreaHomo = await valorLocator_codAreaHomo.textContent();
+
+    let rangoSupPred = 'NO APLICA';
+    try {
+        const label_rangoSupPred = page.locator('text=Rango Superficie Predial (en m²)').first();
+        const valorLocator_rangoSupPred = label_rangoSupPred.locator('xpath=..').locator('div');
+        rangoSupPred = await valorLocator_rangoSupPred.textContent({ timeout: 3000 }) || 'NO APLICA';
+    } catch (e) {
+        console.warn('⚠️ No se encontró "Rango Sup. Predial"');
+    }
+
+    let valM2 = 'NO APLICA';
+    try {
+        const label_valM2 = page.locator('text=Valor m² de Terreno').first();
+        const valorLocator_valM2 = label_valM2.locator('xpath=..').locator('div');
+        valM2 = await valorLocator_valM2.textContent({ timeout: 3000 }) || 'NO APLICA';
+    } catch (e) {
+        console.warn('⚠️ No se encontró "Valor m² de Terreno"');
+    }
+
 
     // Mostrar los valores
     console.log('Código Área Homogénea:', codAreaHomo);
@@ -97,11 +117,18 @@ module.exports = async function bot_SII_rol(page, variables) {
     console.log('------------------------------------------');
 
     // Presionar el botón de (+) para ver detalles de observatorio mercado de suelo urbano 2022 //*[@id="preview"]/div[4]/div[2]/div[1]/span
-    await page.waitForSelector('//*[@id="preview"]/div[4]/div[2]/div[1]/span');
-    await page.click('//*[@id="preview"]/div[4]/div[2]/div[1]/span');
+    // presionar solo si el boton esta disponible, sino pasar al siguiente paso sin caerse
 
-    const valComM2 = await page.locator('//*[@id="preview"]/div[4]/div[2]/div[5]/div').textContent();
+    const boton = await page.$('xpath=//*[@id="preview"]/div[4]/div[2]/div[1]/span', { timeout: 5000 });
+    if (boton && await boton.isVisible()) {
+        await boton.click();
+    }
 
+    const label_valComM2 = page.locator('text=Valor comercial m² de suelo');
+    const valorLocator_valComM2 = label_valComM2.locator('xpath=..').locator('div'); // sube al padre y busca el <div>
+    const valComM2 = await valorLocator_valComM2.textContent();
+
+    //FDO EL ARRAYAN HJ 4
     //convertir el valor anterior a float y multiplicarlo por 4
     const valComM2Float = parseFloat(valComM2.replace(/\./g, '').replace('$', '').replace(',', '.')) * 39235;
     console.log('Valor Comercial por Metro Cuadrado:', valComM2Float);

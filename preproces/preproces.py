@@ -53,7 +53,7 @@ else:
     df['Indicador_de_aseo'] = df['Indicador_de_aseo'].fillna('')
 
     # Filtrar DataFrame para la comuna específica (por ejemplo, Las Condes con código 15108)
-    df = df[df['Comuna Actual'] == 15108]
+    df = df[(df['Comuna Actual'] == 15108) | (df['Comuna Actual'] == 7401)]
     # Guardar DataFrame procesado en archivo Parquet
     df.to_parquet(parquet_file)
 

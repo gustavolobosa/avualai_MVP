@@ -35,7 +35,7 @@ async function reintentarBotConBrowser(fnFactory, nombre = 'bot', intentosMax = 
     }
 }
 
-async function procesarEnBatches(predios, batchSize = 3) {
+async function procesarEnBatches(predios, manzana, variables, batchSize = 3) {
     const resultados = [];
     for (let i = 0; i < predios.length; i += batchSize) {
         const batch = predios.slice(i, i + batchSize);
