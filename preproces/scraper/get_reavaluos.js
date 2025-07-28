@@ -30,8 +30,8 @@ for (let i = 1; i < regiones.length; i++) {
     const opciones = await page.$$('ul.dropdown-menu.inner li');
     const region = opciones[i];
 
-    const texto = await region.innerText();
-    console.log(`🖱️ Clic en: ${texto}`);
+    const texto_region = await region.innerText();
+    console.log(`🖱️ Clic en: ${texto_region}`);
     await region.click();
     await page.waitForTimeout(1000); // Espera opcional para ver qué pasa luego
 
@@ -48,24 +48,36 @@ for (let i = 1; i < regiones.length; i++) {
         const opciones_comunas = await page.$$('ul.dropdown-menu.inner li');
         const comuna = opciones_comunas[c];
 
-        const texto = await comuna.innerText();
-        console.log(`🏙️ Seleccionando comuna: ${texto}`);
+        const texto_comuna = await comuna.innerText();
+        console.log(`🏙️ Seleccionando comuna: ${texto_comuna}`);
 
         await comuna.click();
         await page.waitForTimeout(2000); // Esperar para ver resultados si los hay
 
-        const enlacesPDF = await page.$$eval('a[href$=".pdf"]', links =>
-            links.map(link => link.href)
-        );
+        // Buscar el <a> que contiene el <i class="fa fa-file-pdf-o fa-rojo">
+        const enlacePDF = await page.$('a:has(i.fa-file-pdf-o.fa-rojo)');
 
-        const url = enlacesPDF[0];
-        const fileName = path.basename(url);
-        const filePath = path.resolve('descargas', fileName);
+        if (enlacePDF) {
+            const url = await enlacePDF.getAttribute('href');
 
-        const response = await fetch(url);
-        const buffer = await response.arrayBuffer();
-        fs.writeFileSync(filePath, Buffer.from(buffer));
-        console.log(`📥 Descargado: ${fileName}`);
+            const descargaDir = path.resolve('descargas/reavaluos');
+            const fileName = `REAVALUO_${texto_region}_${texto_comuna}.pdf`;
+            const filePath = path.join(descargaDir, fileName);
+
+            if (!fs.existsSync(descargaDir)) {
+                fs.mkdirSync(descargaDir, { recursive: true });
+            }
+
+            const fullUrl = new URL(url, page.url()).href;
+            const response = await fetch(fullUrl);
+            const buffer = await response.arrayBuffer();
+
+            fs.writeFileSync(filePath, Buffer.from(buffer));
+            console.log(`📥 Descargado: ${fileName}`);
+        } else {
+            console.log('❌ No se encontró el enlace con el ícono PDF para esta comuna');
+        }
+
     }
 
     
