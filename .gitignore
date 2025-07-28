@@ -2,6 +2,8 @@
 /node_modules/
 /scrapers/descargas/
 datos/BRTMPNACROL_NAC_2025_1
+datos/BRORGA2441NL_NAC_2025_1
+datos/BRORGA2441N_NAC_2025_1
 datos/datos_por_predio_LAS_CONDES.json
 
 # Logs
