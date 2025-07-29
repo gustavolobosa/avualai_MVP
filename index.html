@@ -1,20 +1,86 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Próximamente</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      background: url('https://images.unsplash.com/photo-1518779578993-ec3579fee39f') no-repeat center center/cover;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      font-family: sans-serif;
+      color: white;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7); /* oscurece el fondo */
+      z-index: 0;
+    }
+
+    .container {
+      text-align: center;
+      z-index: 1;
+      padding: 2rem;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      letter-spacing: 2px;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .contact {
+      font-size: 1rem;
+      margin-top: 2rem;
+    }
+
+    .contact a {
+      color: #00d1ff;
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+
+    .contact a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <h1>Próximamente</h1>
+  <div class="container">
+    <h1>¡Próximamente!</h1>
+    <p class="subtitle">Estamos construyendo una plataforma innovadora para conectar soluciones tecnológicas con personas y empresas. 🚀</p>
+    <p class="contact">
+      ¿Quieres saber más? Escríbenos a: <br>
+      <a href="mailto:contacto@tudominio.com">contacto@tudominio.com</a><br>
+      o síguenos en
+      <a href="https://linkedin.com">LinkedIn</a> y
+      <a href="https://twitter.com">Twitter</a>
+    </p>
+  </div>
 </body>
 </html>
