@@ -1,24 +1,50 @@
-# Node.js dependencies
+# Node.js
 /node_modules/
-/scrapers/descargas/
-datos/BRTMPNACROL_NAC_2025_1
-datos/BRORGA2441NL_NAC_2025_1
-datos/BRORGA2441N_NAC_2025_1
-datos/datos_por_predio_LAS_CONDES.json
-
-scrapers/descargas/*
-
-# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment variables (if you add any .env files later)
+# Python
+__pycache__/
+*.pyc
+
+# Entornos / secretos
 .env
 
-# OS generated files
+# Editor / OS
 .DS_Store
 Thumbs.db
-
-# Optional: VSCode settings folder
 .vscode/
+.claude/
+.playwright-mcp/
+
+# Datos crudos / generados (NO versionar)
+datos/construcciones/
+datos/info_rol/
+datos/predios/
+datos/BRTMPNACROL_NAC_2025_1
+datos/BRORGA2441NL_NAC_2025_1
+datos/BRORGA2441N_NAC_2025_1
+datos/datos_por_predio_LAS_CONDES.json
+chunks/
+
+# Dumps de base de datos
+*.dump
+toc.list
+
+# Scraper outputs (PDFs descargados)
+preproces/scraper/descargas/
+scrapers/descargas/
+
+# Reportes y outputs derivados de preproceso (se regeneran)
+preproces/homogeneas_*.csv
+preproces/reporte_*.csv
+preproces/reporte_*.xlsx
+preproces/resumen_*.csv
+preproces/fichas_homogeneas_completas.csv
+
+# Derivados del Anexo 4 y tabla reavaluo (fuentes sí se commitean)
+preproces/Anexo 4 Rex 150 _extraido.xlsx
+preproces/Anexo 4 Rex 150 _long.csv
+preproces/Anexo 4 Rex 150 _long.xlsx
+preproces/tabla_reavaluo_completa.csv
