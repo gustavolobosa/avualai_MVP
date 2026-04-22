@@ -38,7 +38,7 @@ for (let i = 1; i < regiones.length; i++) {
     await page.click('xpath=//*[@id="my-wrapper"]/div[2]/div/div/div[2]/div[1]/div/div[2]/div/div/button/span[1]');
 
     const comunas = await page.$$('ul.dropdown-menu.inner li');
-    console.log(`🔁 Total de comunas encontradas: ${comunas.length}`);
+    //console.log(`🔁 Total de comunas encontradas: ${comunas.length}`);
 
     await page.click('xpath=//*[@id="my-wrapper"]/div[2]/div/div/div[2]/div[1]/div/div[2]/div/div/button/span[1]');
 
@@ -49,7 +49,7 @@ for (let i = 1; i < regiones.length; i++) {
         const comuna = opciones_comunas[c];
 
         const texto_comuna = await comuna.innerText();
-        console.log(`🏙️ Seleccionando comuna: ${texto_comuna}`);
+        //console.log(`🏙️ Seleccionando comuna: ${texto_comuna}`);
 
         await comuna.click();
         await page.waitForTimeout(2000); // Esperar para ver resultados si los hay
@@ -73,9 +73,9 @@ for (let i = 1; i < regiones.length; i++) {
             const buffer = await response.arrayBuffer();
 
             fs.writeFileSync(filePath, Buffer.from(buffer));
-            console.log(`📥 Descargado: ${fileName}`);
+            //console.log(`📥 Descargado: ${fileName}`);
         } else {
-            console.log('❌ No se encontró el enlace con el ícono PDF para esta comuna');
+            console.log('❌ No se encontró el enlace con el ícono PDF para esta comuna: ', texto_comuna);
         }
 
     }
